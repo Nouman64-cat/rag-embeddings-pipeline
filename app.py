@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 from langchain_openai import OpenAIEmbeddings
 from langchain_pinecone import PineconeVectorStore
 from langchain_community.document_loaders import PyPDFLoader, TextLoader
-from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_text_splitters import TokenTextSplitter
 
 # 1. Load Environment Variables
 load_dotenv()
@@ -97,10 +97,11 @@ def chunk_data(docs, filename=""):
     """
     Splits text into manageable chunks.
     """
-    logger.info(f"   ✂️  Splitting {filename} into chunks (size=1000, overlap=200)...")
-    text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=1000,   # Characters per chunk
-        chunk_overlap=200, # Overlap to preserve context between chunks
+    logger.info(f"   ✂️  Splitting {filename} into chunks (size=512 tokens, overlap=50 tokens)...")
+    text_splitter = TokenTextSplitter(
+        chunk_size=512,
+        chunk_overlap=50,
+        model_name="gpt-4o",
         add_start_index=True
     )
     chunks = text_splitter.split_documents(docs)
